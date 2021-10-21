@@ -36,6 +36,7 @@ d3.json("airports.json", d3.autoType).then(airports => {
             .enter()
             .append("path")
             .attr("d", path)
+            .attr("opacity", 0)
 
         // Draw border lines
         svg.append("path")
@@ -75,13 +76,16 @@ d3.json("airports.json", d3.autoType).then(airports => {
             .text(d => d.name)
 
         simulation.on("tick", () => {
+
+            console.log("tick")
+
+            node.attr("cx", d => d.x)
+                .attr("cy", d => d.y)
+
             link.attr("x1", d => d.source.x)
                 .attr("y1", d => d.source.y)
                 .attr("x2", d => d.target.x)
                 .attr("y2", d => d.target.y)
-
-            node.attr("cx", d => d.x)
-                .attr("cy", d => d.y)
         })
 
         function drag(simulation) {
@@ -109,6 +113,8 @@ d3.json("airports.json", d3.autoType).then(airports => {
                 .on("end", dragended);
         }
 
+        let visType = "force"
+
         function switchLayout() {
             if (visType === "map") {
                 simulation.stop()
@@ -128,17 +134,24 @@ d3.json("airports.json", d3.autoType).then(airports => {
                     .attr("opacity", 1)
             }
             else {
+                
+                node.transition()
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y)
+
+                link.transition()
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y)
 
                 simulation.restart()
-                
+
                 map.transition()
                     .duration(100)
                     .attr("opacity", 0)
             }
         }
-
-        let visType = "force"
-        switchLayout()
 
         d3.selectAll("input[name=type]").on("change", event => {
             visType = event.target.value
