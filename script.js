@@ -132,7 +132,7 @@ d3.json("airports.json", d3.autoType).then(airports => {
             }
             else {
 
-                simulation.alphaTarget(1).restart()
+                simulation.restart()
 
                 map.transition()
                     .attr("opacity", 0)
