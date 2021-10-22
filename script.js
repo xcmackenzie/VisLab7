@@ -77,8 +77,6 @@ d3.json("airports.json", d3.autoType).then(airports => {
 
         simulation.on("tick", () => {
 
-            console.log("tick")
-
             node.attr("cx", d => d.x)
                 .attr("cy", d => d.y)
 
@@ -120,24 +118,8 @@ d3.json("airports.json", d3.autoType).then(airports => {
                 simulation.stop()
 
                 node.transition()
-                    .attr("cx", d => projection([d.longitude, d.latitude])[0])
-                    .attr("cy", d => projection([d.longitude, d.latitude])[1])
-
-                link.transition()
-                    .attr("x1", d => projection([d.source.longitude, d.source.latitude])[0])
-                    .attr("y1", d => projection([d.source.longitude, d.source.latitude])[1])
-                    .attr("x2", d => projection([d.target.longitude, d.target.latitude])[0])
-                    .attr("y2", d => projection([d.target.longitude, d.target.latitude])[1])
-
-                map.transition()
-                    .duration(100)
-                    .attr("opacity", 1)
-            }
-            else {
-                
-                node.transition()
-                    .attr("cx", d => d.x)
-                    .attr("cy", d => d.y)
+                    .attr("cx", d => d.x = projection([d.longitude, d.latitude])[0])
+                    .attr("cy", d => d.y = projection([d.longitude, d.latitude])[1])
 
                 link.transition()
                     .attr("x1", d => d.source.x)
@@ -145,10 +127,14 @@ d3.json("airports.json", d3.autoType).then(airports => {
                     .attr("x2", d => d.target.x)
                     .attr("y2", d => d.target.y)
 
-                simulation.restart()
+                map.transition()
+                    .attr("opacity", 1)
+            }
+            else {
+
+                simulation.alphaTarget(1).restart()
 
                 map.transition()
-                    .duration(100)
                     .attr("opacity", 0)
             }
         }
